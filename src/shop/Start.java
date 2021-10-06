@@ -10,17 +10,15 @@ import shop.model.Product;
 public class Start {
 	
 	public static Scanner scanner;
-	private List<Product> product;
+	private List<Product> inventoryProducts;
 	//private List<Product> selectedProducts;
 
 	
 	public Start() {
 		
 
-		product = new ArrayList<Product>();
+		inventoryProducts = new ArrayList<Product>();
 		InputContoller.scanner = new Scanner(System.in);
-		System.out.println("ADD - add item to inventory");
-		System.out.println("END - Closes inventory stages");
 		selectedOption();
 		menuShoppingCart();
 
@@ -29,7 +27,8 @@ public class Start {
 
 		
 		private void selectedOption() {
-		
+			System.out.println("ADD - add item to inventory");
+			System.out.println("END - Closes inventory stages");
 		
 				Scanner s = new Scanner(System.in);
 				String input = s.nextLine();
@@ -50,25 +49,26 @@ public class Start {
 			
 		}
 
-			/*if(InputContoller.addOrEnd("Choose between add or end", "")) {
-				
-				addItemToInventory();
-				
-			}if(InputContoller.addOrEnd("Choose between add or end", "you didnt choose between add or end")) {
-				
-				menuShoppingCart();
-			}
-		}*/
-	
-	private void addItemToInventory(String[] splited) {
-		try {
-			int sku = Integer.parseInt(splited[1]);
-		} catch (Exception e) {
-			System.out.println("SKU nije broj probajte ponovo");
-			
-		}
-		
 
+	private void addItemToInventory(String[] splited) {
+		Product newProduct = new Product();
+		try {
+			newProduct.setSku(Integer.parseInt(splited[1]));
+		} catch (Exception e) {
+			System.out.println("SKU is a number, try again");
+		}
+		newProduct.setName(splited[2]);
+		try {
+			newProduct.setQuantity(Integer.parseInt(splited[3]));
+		} catch (Exception e) {
+			System.out.println("Quantity is a number, try again");
+		}
+		try {
+			newProduct.setPrice(Double.parseDouble(splited[4]));
+		} catch (Exception e) {
+			System.out.println("Price is a decimal number, try again");
+		}
+		inventoryProducts.add(newProduct);
 	}
 
 
@@ -80,6 +80,7 @@ public class Start {
 		System.out.println("REMOVE - Removes an item from the shopping cart");
 		System.out.println("CHECKOUT - Print all items");
 		System.out.println("END - Closes the stage and exits the program");
+			
 			
 		}
 	

@@ -7,6 +7,23 @@ public class Product {
 	private int quantity;
 	private Double price;
 	
+	
+	public Product() {
+		super();
+	}
+	
+	
+	
+	public Product(int sku, String name, int quantity, Double price) {
+		super();
+		this.sku = sku;
+		this.name = name;
+		this.quantity = quantity;
+		this.price = price;
+	}
+
+
+
 	public int getSku() {
 		return sku;
 	}
