@@ -50,7 +50,7 @@ public class Start {
 			
 		}
 
-
+		
 	private void addItemToInventory(String[] splited) {
 		Product newProduct = new Product();
 		try {
@@ -122,7 +122,7 @@ public class Start {
 			System.out.println("is empty");
 		}else {
 			for(int i = 0; i < selectedProducts.size(); i++) {
-				selectedProducts.remove(i);
+			selectedProducts.remove(i);
 			}
 		}
 		
@@ -150,11 +150,12 @@ public class Start {
 		}
 		for (Product p : inventoryProducts) {
 			if (tempSKU == p.getSku()) {
-				selectedProducts.add(newProduct);
+				p.setSku(tempSKU);
 			} else {
 				System.out.println("The product is not in the database");
 			}
 			
+			selectedProducts.add(newProduct);
 		}
 		
 		
@@ -164,23 +165,25 @@ public class Start {
 
 
 
-// treba dodati total
+
 	private void checkout() {
 		if(selectedProducts.isEmpty()) {
 			System.out.println("is empty");
 		}else {
 			
-			Product p;
+			Product pp;
+			
 			for(int i = 0; i < selectedProducts.size(); i++) {
-				p = selectedProducts.get(i);
+				pp = selectedProducts.get(i);
 				double sum=0;
-				//double total=0;
-				sum= (p.getQuantity()*p.getPrice());
-				//total = total * p.getQuantity();
-				System.out.println(p.getName() + " " +  p.getQuantity() + " X " + p.getPrice() + " = " + sum);
-				//System.out.println(total);
+				
+				sum= (pp.getQuantity()*pp.getPrice());
+				
+				System.out.println(pp.getName() + " " +  pp.getQuantity() + " X " + pp.getPrice() + " = " + sum);
+				
+			
 		}
-		
+			
 	}
 	}
 
