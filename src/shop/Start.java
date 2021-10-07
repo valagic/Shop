@@ -19,6 +19,7 @@ public class Start {
 		
 
 		inventoryProducts = new ArrayList<Product>();
+		selectedProducts = new ArrayList<Product>();
 		InputContoller.scanner = new Scanner(System.in);
 		selectedOption();
 		menuShoppingCart();
@@ -52,25 +53,41 @@ public class Start {
 
 		
 	private void addItemToInventory(String[] splited) {
-		Product newProduct = new Product();
-		try {
-			newProduct.setSku(Integer.parseInt(splited[1]));
-		} catch (Exception e) {
-			System.out.println("SKU is a number, try again");
-		}
-		newProduct.setName(splited[2]);
-		try {
-			newProduct.setQuantity(Integer.parseInt(splited[3]));
-		} catch (Exception e) {
-			System.out.println("Quantity is a number, try again");
-		}
-		try {
-			newProduct.setPrice(Double.parseDouble(splited[4]));
-		} catch (Exception e) {
-			System.out.println("Price is a decimal number, try again");
-		}
-		inventoryProducts.add(newProduct);
+		if(splited.length!=5) {
+			System.out.println("Please type command in format 'ADD 1 ball 5 5.00'");
+		}else {
+			boolean productExists = false;
+			Product newProduct = new Product();
+			try {
+				newProduct.setSku(Integer.parseInt(splited[1]));
+			} catch (Exception e) {
+				System.out.println("SKU is a number, try again");
+			}
+			newProduct.setName(splited[2]);
+			try {
+				newProduct.setQuantity(Integer.parseInt(splited[3]));
+			} catch (Exception e) {
+				System.out.println("Quantity is a number, try again");
+			}
+			try {
+				newProduct.setPrice(Double.parseDouble(splited[4]));
+			} catch (Exception e) {
+				System.out.println("Price is a decimal number, try again");
+			}
+			
+			for(Product p : inventoryProducts) {
+				if(p.getSku()==newProduct.getSku()) {
+					System.out.println("Product is allready added to inventory");
+					productExists = true;
+				}
+			}
+			
+			if(!productExists) {
+				inventoryProducts.add(newProduct);
+			}
+		}	
 	}
+
 
 
 
@@ -101,7 +118,7 @@ public class Start {
 		
 		}
 		if (splitedCart[0].trim().toLowerCase().equals("remove")) {
-			remove();
+			remove(splitedCart);
 			selectedOptionShoppingCart();
 		}
 		if (splitedCart[0].trim().toLowerCase().equals("checkout")) {
@@ -117,55 +134,84 @@ public class Start {
 	}
 
 
-	private void remove() {
+	private void remove(String[] splitedCart) {
+		Product selectedProduct = new Product();
+		boolean productFound = false;
 		if(selectedProducts.isEmpty()) {
 			System.out.println("is empty");
 		}else {
-			for(int i = 0; i < selectedProducts.size(); i++) {
-			selectedProducts.remove(i);
+			for(Product p : selectedProducts) {
+				if(p.getSku()==Integer.parseInt(splitedCart[1])) {
+					selectedProduct = p;
+					productFound = true;
+					selectedProducts.remove(p);
+					break;
+				}
 			}
+		}
+		if(productFound) {
+			int index = 0;
+			for(Product p : inventoryProducts) {
+				if(p.getSku()==selectedProduct.getSku()) {
+					p.setQuantity(p.getQuantity()+selectedProduct.getQuantity());
+					inventoryProducts.set(index, p);
+					break;
+				}
+				index++;
+			}
+			
 		}
 		
 	}
-
 
 
 	private void addItemToShoppingCart(String[] splitedCart) {
-		int tempSKU = 0;
-		int tempQuantity = 0;
-		
-		Product newProduct = new Product();
-		selectedProducts = new ArrayList<>();
-		
-		try {
-			tempSKU = Integer.parseInt(splitedCart[1]);
-		} catch (Exception e) {
+		if(splitedCart.length!=3) {
+			System.out.println("Please type command in format 'ADD 1 1'");
+		}else {
+			int tempSKU = 0;
+			int tempQuantity = 0;
+			boolean productFound = false;
 			
-		}
-		
-		try {
-			tempQuantity  = Integer.parseInt(splitedCart[2]);
-		} catch (Exception e) {
-			
-		}
-		for (Product p : inventoryProducts) {
-			if (tempSKU == p.getSku()) {
-				p.setSku(tempSKU);
-			} else {
-				System.out.println("The product is not in the database");
+			try {
+				tempSKU = Integer.parseInt(splitedCart[1]);
+			} catch (Exception e) {
+				
 			}
 			
-			selectedProducts.add(newProduct);
+			try {
+				tempQuantity  = Integer.parseInt(splitedCart[2]);
+			} catch (Exception e) {
+				
+			}
+			
+			
+			for (Product p : inventoryProducts) {
+				if (tempSKU == p.getSku()) {
+					if(p.getQuantity()==0) {
+						System.out.println("Unable to add that product to cart because it is currently out of stock.");
+					}else {
+						if(p.getQuantity()<tempQuantity) {
+							System.out.println("There is no enough items in store");
+						}else {
+							Product newProduct = new Product(tempSKU, p.getName(), tempQuantity, p.getPrice());					
+							selectedProducts.add(newProduct);
+							int index = inventoryProducts.indexOf(p);
+							p.setQuantity(p.getQuantity()-tempQuantity);
+							inventoryProducts.set(index, p);
+							productFound = true;
+						}						
+					}
+					break;	
+				}
+				if(!productFound) {
+					System.out.println("There is no such product in store");
+				}
+			}		
 		}
 		
-		
-		
 	}
-
-
-
-
-
+	
 	private void checkout() {
 		if(selectedProducts.isEmpty()) {
 			System.out.println("is empty");
@@ -186,6 +232,7 @@ public class Start {
 			
 	}
 	}
+
 
 	public static void main(String[] args) {
 		new Start();
